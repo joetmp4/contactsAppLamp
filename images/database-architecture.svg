@@ -1,0 +1,343 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 530" width="100%" height="100%">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#090d16"/>
+      <stop offset="50%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#090d16"/>
+    </linearGradient>
+
+    <linearGradient id="dbHeaderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#312e81"/>
+      <stop offset="100%" stop-color="#1e1b4b"/>
+    </linearGradient>
+
+    <linearGradient id="tableHeaderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+
+    <linearGradient id="primaryAccentGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="100%" stop-color="#818cf8"/>
+    </linearGradient>
+
+    <linearGradient id="relGrad" x1="100%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#06b6d4"/>
+      <stop offset="50%" stop-color="#6366f1"/>
+      <stop offset="100%" stop-color="#a855f7"/>
+    </linearGradient>
+
+    <!-- Filters / Shadows -->
+    <filter id="cardShadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+
+    <!-- Markers -->
+    <marker id="arrowhead" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <path d="M 1 1 L 7 4 L 1 7 Z" fill="#818cf8"/>
+    </marker>
+    <marker id="arrowhead-cyan" markerWidth="8" markerHeight="8" refX="2" refY="4" orient="auto">
+      <path d="M 7 1 L 1 4 L 7 7 Z" fill="#06b6d4"/>
+    </marker>
+  </defs>
+
+  <style>
+    .font-sans { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+    .font-mono { font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Menlo, Monaco, Consolas, 'Liberation Mono', monospace; }
+  </style>
+
+  <!-- Canvas Background -->
+  <rect width="920" height="530" rx="16" fill="url(#bgGrad)" stroke="#1e293b" stroke-width="2"/>
+
+  <!-- Subtle Background Grid Pattern -->
+  <g opacity="0.06">
+    <path d="M 0,40 L 920,40 M 0,80 L 920,80 M 0,120 L 920,120 M 0,160 L 920,160 M 0,200 L 920,200 M 0,240 L 920,240 M 0,280 L 920,280 M 0,320 L 920,320 M 0,360 L 920,360 M 0,400 L 920,400 M 0,440 L 920,440 M 0,480 L 920,480" stroke="#f8fafc" stroke-width="1"/>
+    <path d="M 40,0 L 40,530 M 80,0 L 80,530 M 120,0 L 120,530 M 160,0 L 160,530 M 200,0 L 200,530 M 240,0 L 240,530 M 280,0 L 280,530 M 320,0 L 320,530 M 360,0 L 360,530 M 400,0 L 400,530 M 440,0 L 440,530 M 480,0 L 480,530 M 520,0 L 520,530 M 560,0 L 560,530 M 600,0 L 600,530 M 640,0 L 640,530 M 680,0 L 680,530 M 720,0 L 720,530 M 760,0 L 760,530 M 800,0 L 800,530 M 840,0 L 840,530 M 880,0 L 880,530" stroke="#f8fafc" stroke-width="1"/>
+  </g>
+
+  <!-- Ambient Glow Behind Database and Tables -->
+  <circle cx="460" cy="65" r="120" fill="#4f46e5" opacity="0.12" filter="url(#glow)"/>
+  <circle cx="240" cy="300" r="160" fill="#6366f1" opacity="0.08" filter="url(#glow)"/>
+  <circle cx="680" cy="300" r="160" fill="#06b6d4" opacity="0.08" filter="url(#glow)"/>
+
+  <!-- ==========================================
+       TOP DATABASE CONTAINER: ColorsAppDB
+       ========================================== -->
+  <g id="database-container" filter="url(#cardShadow)">
+    <!-- Box Body -->
+    <rect x="270" y="24" width="380" height="74" rx="12" fill="url(#dbHeaderGrad)" stroke="#4f46e5" stroke-width="1.5"/>
+    
+    <!-- Database Icon -->
+    <g transform="translate(290, 39)">
+      <!-- Cylinder Stack Icon -->
+      <ellipse cx="18" cy="10" rx="14" ry="5" fill="#818cf8"/>
+      <path d="M 4,10 L 4,20 C 4,23.5 10.3,26 18,26 C 25.7,26 32,23.5 32,20 L 32,10" fill="none" stroke="#a5b4fc" stroke-width="2"/>
+      <path d="M 4,20 L 4,30 C 4,33.5 10.3,36 18,36 C 25.7,36 32,33.5 32,30 L 32,20" fill="none" stroke="#a5b4fc" stroke-width="2"/>
+      <ellipse cx="18" cy="10" rx="14" ry="5" fill="none" stroke="#c7d2fe" stroke-width="2"/>
+    </g>
+
+    <!-- DB Title & Meta -->
+    <text x="340" y="52" class="font-sans" font-size="18" font-weight="700" fill="#ffffff" letter-spacing="0.3">ColorsAppDB</text>
+    <rect x="472" y="38" width="70" height="18" rx="9" fill="#3730a3" stroke="#6366f1" stroke-width="1"/>
+    <text x="507" y="50.5" class="font-sans" font-size="10" font-weight="600" fill="#c7d2fe" text-anchor="middle">DATABASE</text>
+
+    <!-- DB Badges / Specs -->
+    <text x="340" y="76" class="font-mono" font-size="11" fill="#38bdf8">MySQL 8.0.46</text>
+  </g>
+
+  <!-- Database Containment Lines (Connecting DB to Tables) -->
+  <path d="M 370,98 L 370,126 Q 370,136 360,136 L 245,136 L 245,152" fill="none" stroke="#4f46e5" stroke-width="2" stroke-dasharray="4,4" opacity="0.8"/>
+  <circle cx="245" cy="154" r="3" fill="#818cf8"/>
+
+  <path d="M 550,98 L 550,126 Q 550,136 560,136 L 675,136 L 675,152" fill="none" stroke="#4f46e5" stroke-width="2" stroke-dasharray="4,4" opacity="0.8"/>
+  <circle cx="675" cy="154" r="3" fill="#818cf8"/>
+
+
+  <!-- ==========================================
+       LEFT TABLE: Users
+       ========================================== -->
+  <g id="users-table" filter="url(#cardShadow)">
+    <!-- Table Outer Box -->
+    <rect x="45" y="156" width="385" height="284" rx="12" fill="#0f172a" stroke="#334155" stroke-width="1.5"/>
+    
+    <!-- Table Header Background -->
+    <path d="M 45,168 A 12,12 0 0,1 57,156 L 418,156 A 12,12 0 0,1 430,168 L 430,204 L 45,204 Z" fill="url(#tableHeaderGrad)"/>
+    <line x1="45" y1="204" x2="430" y2="204" stroke="#334155" stroke-width="1.5"/>
+    
+    <!-- Header Indicator Strip -->
+    <path d="M 45,168 A 12,12 0 0,1 57,156 L 418,156 A 12,12 0 0,1 430,168 L 430,160 L 45,160 Z" fill="#6366f1"/>
+
+    <!-- Users Icon (User / People) -->
+    <g transform="translate(62, 170)">
+      <circle cx="10" cy="7" r="5" fill="none" stroke="#818cf8" stroke-width="1.8"/>
+      <path d="M 3,21 C 3,16 6.5,14 10,14 C 13.5,14 17,16 17,21" fill="none" stroke="#818cf8" stroke-width="1.8" stroke-linecap="round"/>
+    </g>
+
+    <!-- Table Title -->
+    <text x="90" y="187" class="font-sans" font-size="16" font-weight="700" fill="#f8fafc">Users</text>
+    <text x="142" y="186" class="font-mono" font-size="11" fill="#64748b">(`Users`)</text>
+
+    <!-- Parent Entity Badge -->
+    <rect x="325" y="171" width="90" height="20" rx="10" fill="rgba(99, 102, 241, 0.15)" stroke="#6366f1" stroke-width="1"/>
+    <text x="370" y="185" class="font-sans" font-size="10" font-weight="600" fill="#a5b4fc" text-anchor="middle">Parent Entity</text>
+
+    <!-- ================= Rows ================= -->
+    <!-- Row 1: ID (PK, AI) -->
+    <rect x="46" y="205" width="383" height="46" fill="rgba(99, 102, 241, 0.08)"/>
+    <!-- Key icon -->
+    <text x="62" y="233" class="font-sans" font-size="13" fill="#fbbf24">🔑</text>
+    <text x="88" y="233" class="font-mono" font-size="13" font-weight="700" fill="#f8fafc">ID</text>
+    <text x="180" y="233" class="font-mono" font-size="12" fill="#94a3b8">INT</text>
+    <!-- Badges -->
+    <rect x="290" y="220" width="30" height="18" rx="4" fill="#78350f" stroke="#f59e0b" stroke-width="1"/>
+    <text x="305" y="233" class="font-sans" font-size="10" font-weight="700" fill="#fde68a" text-anchor="middle">PK</text>
+    
+    <rect x="326" y="220" width="28" height="18" rx="4" fill="#312e81" stroke="#6366f1" stroke-width="1"/>
+    <text x="340" y="233" class="font-sans" font-size="10" font-weight="700" fill="#c7d2fe" text-anchor="middle">AI</text>
+
+    <rect x="360" y="220" width="55" height="18" rx="4" fill="#1e293b" stroke="#475569" stroke-width="1"/>
+    <text x="387.5" y="233" class="font-mono" font-size="9" font-weight="600" fill="#cbd5e1" text-anchor="middle">NOT NULL</text>
+    
+    <line x1="45" y1="251" x2="430" y2="251" stroke="#1e293b" stroke-width="1"/>
+
+    <!-- Row 2: FirstName -->
+    <text x="88" y="278" class="font-mono" font-size="13" font-weight="500" fill="#e2e8f0">FirstName</text>
+    <text x="180" y="278" class="font-mono" font-size="12" fill="#94a3b8">VARCHAR(50)</text>
+    <rect x="360" y="265" width="55" height="18" rx="4" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+    <text x="387.5" y="278" class="font-mono" font-size="9" fill="#94a3b8" text-anchor="middle">DEFAULT ''</text>
+    
+    <line x1="45" y1="297" x2="430" y2="297" stroke="#1e293b" stroke-width="1"/>
+
+    <!-- Row 3: LastName -->
+    <text x="88" y="324" class="font-mono" font-size="13" font-weight="500" fill="#e2e8f0">LastName</text>
+    <text x="180" y="324" class="font-mono" font-size="12" fill="#94a3b8">VARCHAR(50)</text>
+    <rect x="360" y="311" width="55" height="18" rx="4" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+    <text x="387.5" y="324" class="font-mono" font-size="9" fill="#94a3b8" text-anchor="middle">DEFAULT ''</text>
+
+    <line x1="45" y1="343" x2="430" y2="343" stroke="#1e293b" stroke-width="1"/>
+
+    <!-- Row 4: Login -->
+    <rect x="46" y="344" width="383" height="46" fill="rgba(56, 189, 248, 0.04)"/>
+    <text x="88" y="371" class="font-mono" font-size="13" font-weight="600" fill="#f8fafc">Login</text>
+    <text x="180" y="371" class="font-mono" font-size="12" fill="#94a3b8">VARCHAR(50)</text>
+    
+    <rect x="290" y="358" width="64" height="18" rx="4" fill="#082f49" stroke="#0284c7" stroke-width="1"/>
+    <text x="322" y="371" class="font-mono" font-size="9" font-weight="700" fill="#38bdf8" text-anchor="middle">idx_login</text>
+    
+    <rect x="360" y="358" width="55" height="18" rx="4" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+    <text x="387.5" y="371" class="font-mono" font-size="9" fill="#94a3b8" text-anchor="middle">DEFAULT ''</text>
+
+    <line x1="45" y1="389" x2="430" y2="389" stroke="#1e293b" stroke-width="1"/>
+
+    <!-- Row 5: Password -->
+    <text x="88" y="418" class="font-mono" font-size="13" font-weight="500" fill="#e2e8f0">Password</text>
+    <text x="180" y="418" class="font-mono" font-size="12" fill="#94a3b8">VARCHAR(50)</text>
+    <rect x="360" y="405" width="55" height="18" rx="4" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+    <text x="387.5" y="418" class="font-mono" font-size="9" fill="#94a3b8" text-anchor="middle">DEFAULT ''</text>
+  </g>
+
+
+  <!-- ==========================================
+       RIGHT TABLE: Colors
+       ========================================== -->
+  <g id="colors-table" filter="url(#cardShadow)">
+    <!-- Table Outer Box -->
+    <rect x="490" y="156" width="385" height="284" rx="12" fill="#0f172a" stroke="#334155" stroke-width="1.5"/>
+    
+    <!-- Table Header Background -->
+    <path d="M 490,168 A 12,12 0 0,1 502,156 L 863,156 A 12,12 0 0,1 875,168 L 875,204 L 490,204 Z" fill="url(#tableHeaderGrad)"/>
+    <line x1="490" y1="204" x2="875" y2="204" stroke="#334155" stroke-width="1.5"/>
+    
+    <!-- Header Indicator Strip -->
+    <path d="M 490,168 A 12,12 0 0,1 502,156 L 863,156 A 12,12 0 0,1 875,168 L 875,160 L 490,160 Z" fill="#06b6d4"/>
+
+    <!-- Palette Icon -->
+    <g transform="translate(507, 170)">
+      <circle cx="10" cy="10" r="9" fill="none" stroke="#22d3ee" stroke-width="1.8"/>
+      <circle cx="8" cy="7" r="1.5" fill="#ef4444"/>
+      <circle cx="12" cy="7" r="1.5" fill="#f59e0b"/>
+      <circle cx="13" cy="11" r="1.5" fill="#10b981"/>
+    </g>
+
+    <!-- Table Title -->
+    <text x="535" y="187" class="font-sans" font-size="16" font-weight="700" fill="#f8fafc">Colors</text>
+    <text x="590" y="186" class="font-mono" font-size="11" fill="#64748b">(`Colors`)</text>
+
+    <!-- Child Entity Badge -->
+    <rect x="770" y="171" width="90" height="20" rx="10" fill="rgba(6, 182, 212, 0.15)" stroke="#06b6d4" stroke-width="1"/>
+    <text x="815" y="185" class="font-sans" font-size="10" font-weight="600" fill="#67e8f9" text-anchor="middle">Child Entity</text>
+
+    <!-- ================= Rows ================= -->
+    <!-- Row 1: ID (PK, AI) -->
+    <rect x="491" y="205" width="383" height="46" fill="rgba(99, 102, 241, 0.08)"/>
+    <text x="507" y="233" class="font-sans" font-size="13" fill="#fbbf24">🔑</text>
+    <text x="533" y="233" class="font-mono" font-size="13" font-weight="700" fill="#f8fafc">ID</text>
+    <text x="620" y="233" class="font-mono" font-size="12" fill="#94a3b8">INT</text>
+    
+    <rect x="735" y="220" width="30" height="18" rx="4" fill="#78350f" stroke="#f59e0b" stroke-width="1"/>
+    <text x="750" y="233" class="font-sans" font-size="10" font-weight="700" fill="#fde68a" text-anchor="middle">PK</text>
+    
+    <rect x="771" y="220" width="28" height="18" rx="4" fill="#312e81" stroke="#6366f1" stroke-width="1"/>
+    <text x="785" y="233" class="font-sans" font-size="10" font-weight="700" fill="#c7d2fe" text-anchor="middle">AI</text>
+
+    <rect x="805" y="220" width="55" height="18" rx="4" fill="#1e293b" stroke="#475569" stroke-width="1"/>
+    <text x="832.5" y="233" class="font-mono" font-size="9" font-weight="600" fill="#cbd5e1" text-anchor="middle">NOT NULL</text>
+    
+    <line x1="490" y1="251" x2="875" y2="251" stroke="#1e293b" stroke-width="1"/>
+
+    <!-- Row 2: Name -->
+    <text x="533" y="278" class="font-mono" font-size="13" font-weight="500" fill="#e2e8f0">Name</text>
+    <text x="620" y="278" class="font-mono" font-size="12" fill="#94a3b8">VARCHAR(50)</text>
+    <rect x="805" y="265" width="55" height="18" rx="4" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+    <text x="832.5" y="278" class="font-mono" font-size="9" fill="#94a3b8" text-anchor="middle">DEFAULT ''</text>
+
+    <line x1="490" y1="297" x2="875" y2="297" stroke="#1e293b" stroke-width="1"/>
+
+    <!-- Row 3: UserID (FK, Index) -->
+    <rect x="491" y="298" width="383" height="46" fill="rgba(6, 182, 212, 0.1)"/>
+    <text x="507" y="326" class="font-sans" font-size="13" fill="#38bdf8">🔗</text>
+    <text x="533" y="326" class="font-mono" font-size="13" font-weight="700" fill="#38bdf8">UserID</text>
+    <text x="620" y="326" class="font-mono" font-size="12" fill="#94a3b8">INT</text>
+
+    <rect x="712" y="312" width="28" height="18" rx="4" fill="#164e63" stroke="#06b6d4" stroke-width="1"/>
+    <text x="726" y="325" class="font-sans" font-size="10" font-weight="700" fill="#67e8f9" text-anchor="middle">FK</text>
+
+    <rect x="746" y="312" width="53" height="18" rx="4" fill="#082f49" stroke="#0284c7" stroke-width="1"/>
+    <text x="772.5" y="325" class="font-mono" font-size="9" font-weight="700" fill="#38bdf8" text-anchor="middle">idx_user</text>
+
+    <rect x="805" y="312" width="55" height="18" rx="4" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+    <text x="832.5" y="325" class="font-mono" font-size="9" fill="#94a3b8" text-anchor="middle">DEFAULT 0</text>
+
+    <line x1="490" y1="344" x2="875" y2="344" stroke="#1e293b" stroke-width="1"/>
+
+    <!-- Association Explainer Box in Colors Table footer -->
+    <g transform="translate(506, 356)">
+      <rect width="354" height="72" rx="8" fill="rgba(15, 23, 42, 0.9)" stroke="#1e293b" stroke-width="1"/>
+      <text x="14" y="24" class="font-sans" font-size="11" font-weight="600" fill="#94a3b8">RELATIONSHIP MAPPING:</text>
+      <text x="14" y="44" class="font-mono" font-size="11" fill="#cbd5e1">Colors.UserID <tspan fill="#818cf8">──►</tspan> Users.ID</text>
+      <text x="14" y="60" class="font-sans" font-size="10" fill="#64748b">Each color belongs to a single authenticated user.</text>
+    </g>
+  </g>
+
+
+  <!-- ==========================================
+       RELATIONSHIP CONNECTOR (1:N Crow's Foot ERD)
+       ========================================== -->
+  <g id="relationship-connector">
+    <!-- Highlight Connector Background Halo -->
+    <path d="M 430,228 L 446,228 C 458,228 450,321 462,321 L 490,321" fill="none" stroke="#6366f1" stroke-width="6" opacity="0.25" filter="url(#glow)"/>
+    
+    <!-- Main Relationship Line -->
+    <path d="M 430,228 L 446,228 C 458,228 450,321 462,321 L 474,321" fill="none" stroke="url(#relGrad)" stroke-width="2.5" stroke-linecap="round"/>
+
+    <!-- Users Side: Mandatory 'One' (||) ERD Notation at Users.ID -->
+    <g id="erd-one-side">
+      <line x1="436" y1="219" x2="436" y2="237" stroke="#818cf8" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="442" y1="219" x2="442" y2="237" stroke="#818cf8" stroke-width="2.5" stroke-linecap="round"/>
+    </g>
+
+    <!-- Colors Side: 'Zero or Many' Crow's Foot (>o) ERD Notation at Colors.UserID -->
+    <g id="erd-many-side">
+      <circle cx="466" cy="321" r="3.5" fill="#0f172a" stroke="#06b6d4" stroke-width="2"/>
+      <path d="M 474,321 L 490,311 M 474,321 L 490,321 M 474,321 L 490,331" fill="none" stroke="#06b6d4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+
+    <!-- Center 1:N Pill Badge -->
+    <g transform="translate(460, 275)" filter="url(#cardShadow)">
+      <rect x="-28" y="-11" width="56" height="22" rx="11" fill="#1e1b4b" stroke="#818cf8" stroke-width="1.5"/>
+      <text x="0" y="3.5" class="font-sans" font-size="10" font-weight="700" fill="#ffffff" text-anchor="middle" letter-spacing="0.5">1 : N</text>
+    </g>
+  </g>
+
+
+  <!-- ==========================================
+       BOTTOM LEGEND / FOOTER
+       ========================================== -->
+  <g id="legend" transform="translate(110, 462)">
+    <rect x="0" y="0" width="700" height="44" rx="22" fill="#0f172a" stroke="#1e293b" stroke-width="1.5"/>
+    
+    <!-- Legend Item 1: PK -->
+    <g transform="translate(25, 13)">
+      <rect x="0" y="0" width="26" height="18" rx="4" fill="#78350f" stroke="#f59e0b" stroke-width="1"/>
+      <text x="13" y="13" class="font-sans" font-size="10" font-weight="700" fill="#fde68a" text-anchor="middle">PK</text>
+      <text x="32" y="13" class="font-sans" font-size="11" font-weight="500" fill="#cbd5e1">Primary Key</text>
+    </g>
+
+    <!-- Legend Item 2: FK -->
+    <g transform="translate(145, 13)">
+      <rect x="0" y="0" width="26" height="18" rx="4" fill="#164e63" stroke="#06b6d4" stroke-width="1"/>
+      <text x="13" y="13" class="font-sans" font-size="10" font-weight="700" fill="#67e8f9" text-anchor="middle">FK</text>
+      <text x="32" y="13" class="font-sans" font-size="11" font-weight="500" fill="#cbd5e1">Foreign Key</text>
+    </g>
+
+    <!-- Legend Item 3: AI -->
+    <g transform="translate(265, 13)">
+      <rect x="0" y="0" width="24" height="18" rx="4" fill="#312e81" stroke="#6366f1" stroke-width="1"/>
+      <text x="12" y="13" class="font-sans" font-size="10" font-weight="700" fill="#c7d2fe" text-anchor="middle">AI</text>
+      <text x="30" y="13" class="font-sans" font-size="11" font-weight="500" fill="#cbd5e1">Auto-Increment</text>
+    </g>
+
+    <!-- Legend Item 4: INDEX -->
+    <g transform="translate(395, 13)">
+      <rect x="0" y="0" width="40" height="18" rx="4" fill="#082f49" stroke="#0284c7" stroke-width="1"/>
+      <text x="20" y="12.5" class="font-mono" font-size="8.5" font-weight="700" fill="#38bdf8" text-anchor="middle">INDEX</text>
+      <text x="46" y="13" class="font-sans" font-size="11" font-weight="500" fill="#cbd5e1">Indexed</text>
+    </g>
+
+    <!-- Legend Item 5: 1:N (Crow's Foot ERD) -->
+    <g transform="translate(505, 13)">
+      <line x1="0" y1="9" x2="38" y2="9" stroke="url(#relGrad)" stroke-width="2"/>
+      <line x1="4" y1="3" x2="4" y2="15" stroke="#818cf8" stroke-width="1.8" stroke-linecap="round"/>
+      <line x1="8" y1="3" x2="8" y2="15" stroke="#818cf8" stroke-width="1.8" stroke-linecap="round"/>
+      <circle cx="26" cy="9" r="2.5" fill="#0f172a" stroke="#06b6d4" stroke-width="1.5"/>
+      <path d="M 32,9 L 39,4 M 32,9 L 39,9 M 32,9 L 39,14" fill="none" stroke="#06b6d4" stroke-width="1.5" stroke-linecap="round"/>
+      <text x="48" y="13" class="font-sans" font-size="11" font-weight="500" fill="#cbd5e1">1:N (Crow's Foot)</text>
+    </g>
+  </g>
+</svg>

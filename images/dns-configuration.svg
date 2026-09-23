@@ -1,0 +1,294 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 570" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradients -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#090d16"/>
+      <stop offset="50%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#090d16"/>
+    </linearGradient>
+
+    <linearGradient id="topCardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e1b4b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+
+    <linearGradient id="cardHeaderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+
+    <linearGradient id="serverCardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#064e3b"/>
+      <stop offset="50%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#022c22"/>
+    </linearGradient>
+
+    <linearGradient id="indigoGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="100%" stop-color="#818cf8"/>
+    </linearGradient>
+
+    <linearGradient id="cyanGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#06b6d4"/>
+      <stop offset="100%" stop-color="#22d3ee"/>
+    </linearGradient>
+
+    <linearGradient id="emeraldGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#10b981"/>
+      <stop offset="100%" stop-color="#34d399"/>
+    </linearGradient>
+
+    <!-- Filters / Shadows -->
+    <filter id="cardShadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+
+    <!-- Markers -->
+    <marker id="arrow-indigo" markerWidth="8" markerHeight="8" refX="5" refY="4" orient="auto">
+      <path d="M 1 1 L 7 4 L 1 7 Z" fill="#818cf8"/>
+    </marker>
+    <marker id="arrow-cyan" markerWidth="8" markerHeight="8" refX="5" refY="4" orient="auto">
+      <path d="M 1 1 L 7 4 L 1 7 Z" fill="#22d3ee"/>
+    </marker>
+    <marker id="arrow-emerald" markerWidth="8" markerHeight="8" refX="5" refY="4" orient="auto">
+      <path d="M 1 1 L 7 4 L 1 7 Z" fill="#34d399"/>
+    </marker>
+  </defs>
+
+  <style>
+    .font-sans { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+    .font-mono { font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Menlo, Monaco, Consolas, 'Liberation Mono', monospace; }
+  </style>
+
+  <!-- Canvas Background -->
+  <rect width="960" height="570" rx="16" fill="url(#bgGrad)" stroke="#1e293b" stroke-width="2"/>
+
+  <!-- Subtle Background Grid Pattern -->
+  <g opacity="0.05">
+    <path d="M 0,40 L 960,40 M 0,80 L 960,80 M 0,120 L 960,120 M 0,160 L 960,160 M 0,200 L 960,200 M 0,240 L 960,240 M 0,280 L 960,280 M 0,320 L 960,320 M 0,360 L 960,360 M 0,400 L 960,400 M 0,440 L 960,440 M 0,480 L 960,480 M 0,520 L 960,520" stroke="#f8fafc" stroke-width="1"/>
+    <path d="M 40,0 L 40,570 M 80,0 L 80,570 M 120,0 L 120,570 M 160,0 L 160,570 M 200,0 L 200,570 M 240,0 L 240,570 M 280,0 L 280,570 M 320,0 L 320,570 M 360,0 L 360,570 M 400,0 L 400,570 M 440,0 L 440,570 M 480,0 L 480,570 M 520,0 L 520,570 M 560,0 L 560,570 M 600,0 L 600,570 M 640,0 L 640,570 M 680,0 L 680,570 M 720,0 L 720,570 M 760,0 L 760,570 M 800,0 L 800,570 M 840,0 L 840,570 M 880,0 L 880,570 M 920,0 L 920,570" stroke="#f8fafc" stroke-width="1"/>
+  </g>
+
+  <!-- Ambient Glow Behind Elements -->
+  <circle cx="480" cy="62" r="110" fill="#6366f1" opacity="0.1" filter="url(#glow)"/>
+  <circle cx="250" cy="270" r="140" fill="#4f46e5" opacity="0.08" filter="url(#glow)"/>
+  <circle cx="710" cy="270" r="140" fill="#0891b2" opacity="0.08" filter="url(#glow)"/>
+  <circle cx="480" cy="500" r="120" fill="#10b981" opacity="0.09" filter="url(#glow)"/>
+
+
+  <!-- ==========================================
+       TOP CONTAINER: Domain Registrar
+       ========================================== -->
+  <g id="top-registrar" filter="url(#cardShadow)">
+    <rect x="270" y="20" width="420" height="76" rx="12" fill="url(#topCardGrad)" stroke="#6366f1" stroke-width="1.5"/>
+    
+    <!-- Globe Icon -->
+    <g transform="translate(290, 36)">
+      <circle cx="22" cy="22" r="18" fill="none" stroke="#818cf8" stroke-width="2"/>
+      <ellipse cx="22" cy="22" rx="8" ry="18" fill="none" stroke="#818cf8" stroke-width="1.5"/>
+      <line x1="4" y1="22" x2="40" y2="22" stroke="#818cf8" stroke-width="1.5"/>
+      <line x1="8" y1="12" x2="36" y2="12" stroke="#818cf8" stroke-width="1.2" stroke-opacity="0.8"/>
+      <line x1="8" y1="32" x2="36" y2="32" stroke="#818cf8" stroke-width="1.2" stroke-opacity="0.8"/>
+    </g>
+
+    <!-- Title & Apex Domain -->
+    <text x="350" y="47" class="font-sans" font-size="17" font-weight="700" fill="#ffffff" letter-spacing="0.3">Domain Registrar</text>
+    <rect x="522" y="33" width="150" height="18" rx="9" fill="#312e81" stroke="#6366f1" stroke-width="1"/>
+    <text x="597" y="45.5" class="font-sans" font-size="9.5" font-weight="700" fill="#c7d2fe" text-anchor="middle">APEX DOMAIN ROOT</text>
+    <text x="350" y="71" class="font-mono" font-size="11" fill="#94a3b8">
+      <tspan fill="#e2e8f0">Namecheap, GoDaddy, Cloudflare</tspan>
+      <tspan fill="#64748b"> • </tspan>
+      <tspan fill="#38bdf8">johnaedo.com</tspan>
+    </text>
+  </g>
+
+
+  <!-- ==========================================
+       BRANCHING CONNECTORS
+       ========================================== -->
+  <!-- Center Trunk down from top container -->
+  <line x1="480" y1="96" x2="480" y2="118" stroke="#818cf8" stroke-width="2" stroke-dasharray="4,4"/>
+  <circle cx="480" cy="118" r="3.5" fill="#818cf8"/>
+
+  <!-- Left Branch Path (To Option 1) -->
+  <path d="M 480,118 Q 480,132 460,132 L 272,132 Q 252,132 252,146 L 252,154" fill="none" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow-indigo)"/>
+
+  <!-- Right Branch Path (To Option 2) -->
+  <path d="M 480,118 Q 480,132 500,132 L 688,132 Q 708,132 708,146 L 708,154" fill="none" stroke="#06b6d4" stroke-width="2" marker-end="url(#arrow-cyan)"/>
+
+
+  <!-- ==========================================
+       LEFT COLUMN: Option 1 (Delegated to DigitalOcean)
+       ========================================== -->
+  <g id="option-1-column" filter="url(#cardShadow)">
+    <!-- Option 1 Banner / Header Badge -->
+    <rect x="50" y="156" width="405" height="34" rx="10" fill="#1e1b4b" stroke="#6366f1" stroke-width="1.5"/>
+    <rect x="58" y="163" width="70" height="20" rx="6" fill="#4338ca"/>
+    <text x="93" y="177" class="font-sans" font-size="10.5" font-weight="700" fill="#ffffff" text-anchor="middle">OPTION 1</text>
+    <text x="136" y="178" class="font-sans" font-size="12.5" font-weight="700" fill="#c7d2fe">Delegated Nameservers</text>
+    <rect x="340" y="163" width="105" height="20" rx="10" fill="rgba(16, 185, 129, 0.2)" stroke="#10b981" stroke-width="1"/>
+    <text x="392.5" y="177" class="font-sans" font-size="10" font-weight="700" fill="#6ee7b7" text-anchor="middle">RECOMMENDED</text>
+
+    <!-- Card 1A: Point Nameservers at Registrar -->
+    <g transform="translate(50, 198)">
+      <rect width="405" height="96" rx="10" fill="#0f172a" stroke="#334155" stroke-width="1.5"/>
+      <path d="M 0,8 A 8,8 0 0,1 8,0 L 397,0 A 8,8 0 0,1 405,8 L 405,26 L 0,26 Z" fill="url(#cardHeaderGrad)"/>
+      <line x1="0" y1="26" x2="405" y2="26" stroke="#334155" stroke-width="1"/>
+      <path d="M 0,8 A 8,8 0 0,1 8,0 L 405,0 L 405,3 L 0,3 Z" fill="#6366f1"/>
+      
+      <text x="14" y="18" class="font-sans" font-size="11" font-weight="700" fill="#f8fafc">Step 1: Set Custom Nameservers at Registrar</text>
+      
+      <!-- NS Pills Container -->
+      <g transform="translate(14, 36)">
+        <rect x="0" y="0" width="118" height="22" rx="6" fill="#1e1b4b" stroke="#4f46e5" stroke-width="1"/>
+        <text x="59" y="14.5" class="font-mono" font-size="9.5" font-weight="600" fill="#c7d2fe" text-anchor="middle">ns1.digitalocean.com</text>
+
+        <rect x="128" y="0" width="118" height="22" rx="6" fill="#1e1b4b" stroke="#4f46e5" stroke-width="1"/>
+        <text x="187" y="14.5" class="font-mono" font-size="9.5" font-weight="600" fill="#c7d2fe" text-anchor="middle">ns2.digitalocean.com</text>
+
+        <rect x="256" y="0" width="118" height="22" rx="6" fill="#1e1b4b" stroke="#4f46e5" stroke-width="1"/>
+        <text x="315" y="14.5" class="font-mono" font-size="9.5" font-weight="600" fill="#c7d2fe" text-anchor="middle">ns3.digitalocean.com</text>
+      </g>
+      <text x="14" y="80" class="font-sans" font-size="10.5" fill="#94a3b8">Delegates zone authority completely to DigitalOcean Cloud DNS.</text>
+    </g>
+
+    <!-- Connector 1A -> 1B -->
+    <path d="M 252,294 L 252,316" fill="none" stroke="#818cf8" stroke-width="2" marker-end="url(#arrow-indigo)"/>
+
+    <!-- Card 1B: DigitalOcean DNS Control Panel -->
+    <g transform="translate(50, 318)">
+      <rect width="405" height="110" rx="10" fill="#0f172a" stroke="#334155" stroke-width="1.5"/>
+      <path d="M 0,8 A 8,8 0 0,1 8,0 L 397,0 A 8,8 0 0,1 405,8 L 405,26 L 0,26 Z" fill="url(#cardHeaderGrad)"/>
+      <line x1="0" y1="26" x2="405" y2="26" stroke="#334155" stroke-width="1"/>
+      <path d="M 0,8 A 8,8 0 0,1 8,0 L 405,0 L 405,3 L 0,3 Z" fill="#6366f1"/>
+
+      <text x="14" y="18" class="font-sans" font-size="11" font-weight="700" fill="#f8fafc">Step 2: Add Subdomain A Record in DigitalOcean</text>
+      
+      <!-- Record Details Box -->
+      <g transform="translate(14, 34)">
+        <rect width="377" height="42" rx="6" fill="#090d16" stroke="#1e293b" stroke-width="1"/>
+        <text x="12" y="18" class="font-mono" font-size="10.5" fill="#e2e8f0">
+          <tspan fill="#fbbf24" font-weight="700">TYPE: </tspan><tspan fill="#f8fafc">A</tspan>
+          <tspan fill="#64748b"> │ </tspan>
+          <tspan fill="#38bdf8" font-weight="700">HOST: </tspan><tspan fill="#f8fafc">lamp</tspan>
+          <tspan fill="#64748b"> │ </tspan>
+          <tspan fill="#34d399" font-weight="700">TTL: </tspan><tspan fill="#f8fafc">3600s</tspan>
+        </text>
+        <text x="12" y="34" class="font-mono" font-size="10" fill="#94a3b8">
+          <tspan fill="#818cf8" font-weight="700">DIRECTS TO: </tspan><tspan fill="#cbd5e1">&lt;Droplet Public IPv4&gt;</tspan>
+        </text>
+      </g>
+      <text x="14" y="96" class="font-sans" font-size="10.5" fill="#a5b4fc">Controls DNS records directly from the DigitalOcean Dashboard.</text>
+    </g>
+  </g>
+
+
+  <!-- ==========================================
+       RIGHT COLUMN: Option 2 (Direct at Registrar)
+       ========================================== -->
+  <g id="option-2-column" filter="url(#cardShadow)">
+    <!-- Option 2 Banner / Header Badge -->
+    <rect x="505" y="156" width="405" height="34" rx="10" fill="#082f49" stroke="#06b6d4" stroke-width="1.5"/>
+    <rect x="513" y="163" width="70" height="20" rx="6" fill="#0284c7"/>
+    <text x="548" y="177" class="font-sans" font-size="10.5" font-weight="700" fill="#ffffff" text-anchor="middle">OPTION 2</text>
+    <text x="592" y="178" class="font-sans" font-size="12.5" font-weight="700" fill="#67e8f9">Direct Registrar A Record</text>
+    <rect x="785" y="163" width="115" height="20" rx="10" fill="rgba(6, 182, 212, 0.15)" stroke="#06b6d4" stroke-width="1"/>
+    <text x="842.5" y="177" class="font-sans" font-size="10" font-weight="600" fill="#a5f3fc" text-anchor="middle">BUILT-IN DNS</text>
+
+    <!-- Card 2A: Retain Registrar Nameservers -->
+    <g transform="translate(505, 198)">
+      <rect width="405" height="96" rx="10" fill="#0f172a" stroke="#334155" stroke-width="1.5"/>
+      <path d="M 0,8 A 8,8 0 0,1 8,0 L 397,0 A 8,8 0 0,1 405,8 L 405,26 L 0,26 Z" fill="url(#cardHeaderGrad)"/>
+      <line x1="0" y1="26" x2="405" y2="26" stroke="#334155" stroke-width="1"/>
+      <path d="M 0,8 A 8,8 0 0,1 8,0 L 405,0 L 405,3 L 0,3 Z" fill="#06b6d4"/>
+
+      <text x="14" y="18" class="font-sans" font-size="11" font-weight="700" fill="#f8fafc">Step 1: Keep Registrar Default / Advanced DNS</text>
+      
+      <!-- Status Box -->
+      <g transform="translate(14, 36)">
+        <rect x="0" y="0" width="377" height="26" rx="6" fill="#082f49" stroke="#0284c7" stroke-width="1"/>
+        <text x="14" y="17" class="font-mono" font-size="10" font-weight="600" fill="#7dd3fc">
+          ✓ No Nameserver migration needed (Nameservers stay intact)
+        </text>
+      </g>
+      <text x="14" y="80" class="font-sans" font-size="10.5" fill="#94a3b8">Uses Namecheap BasicDNS, GoDaddy DNS, or Cloudflare DNS.</text>
+    </g>
+
+    <!-- Connector 2A -> 2B -->
+    <path d="M 707,294 L 707,316" fill="none" stroke="#22d3ee" stroke-width="2" marker-end="url(#arrow-cyan)"/>
+
+    <!-- Card 2B: Create A Record on Registrar DNS -->
+    <g transform="translate(505, 318)">
+      <rect width="405" height="110" rx="10" fill="#0f172a" stroke="#334155" stroke-width="1.5"/>
+      <path d="M 0,8 A 8,8 0 0,1 8,0 L 397,0 A 8,8 0 0,1 405,8 L 405,26 L 0,26 Z" fill="url(#cardHeaderGrad)"/>
+      <line x1="0" y1="26" x2="405" y2="26" stroke="#334155" stroke-width="1"/>
+      <path d="M 0,8 A 8,8 0 0,1 8,0 L 405,0 L 405,3 L 0,3 Z" fill="#06b6d4"/>
+
+      <text x="14" y="18" class="font-sans" font-size="11" font-weight="700" fill="#f8fafc">Step 2: Create Subdomain A Record on Registrar</text>
+      
+      <!-- Record Details Box -->
+      <g transform="translate(14, 34)">
+        <rect width="377" height="42" rx="6" fill="#090d16" stroke="#1e293b" stroke-width="1"/>
+        <text x="12" y="18" class="font-mono" font-size="10.5" fill="#e2e8f0">
+          <tspan fill="#fbbf24" font-weight="700">TYPE: </tspan><tspan fill="#f8fafc">A Record</tspan>
+          <tspan fill="#64748b"> │ </tspan>
+          <tspan fill="#38bdf8" font-weight="700">HOST: </tspan><tspan fill="#f8fafc">lamp</tspan>
+          <tspan fill="#64748b"> │ </tspan>
+          <tspan fill="#34d399" font-weight="700">TTL: </tspan><tspan fill="#f8fafc">1 min / Auto</tspan>
+        </text>
+        <text x="12" y="34" class="font-mono" font-size="10" fill="#94a3b8">
+          <tspan fill="#22d3ee" font-weight="700">VALUE / IP: </tspan><tspan fill="#cbd5e1">&lt;Droplet Public IPv4&gt;</tspan>
+        </text>
+      </g>
+      <text x="14" y="96" class="font-sans" font-size="10.5" fill="#67e8f9">Directs subdomain traffic straight from registrar DNS to server.</text>
+    </g>
+  </g>
+
+
+  <!-- ==========================================
+       CONVERGENCE PATHS (Down to Target Droplet)
+       ========================================== -->
+  <!-- Left path to target -->
+  <path d="M 252,428 L 252,444 Q 252,454 272,454 L 380,454 Q 400,454 400,464 L 400,470" fill="none" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow-indigo)"/>
+
+  <!-- Right path to target -->
+  <path d="M 707,428 L 707,444 Q 707,454 687,454 L 580,454 Q 560,454 560,464 L 560,470" fill="none" stroke="#06b6d4" stroke-width="2" marker-end="url(#arrow-cyan)"/>
+
+
+  <!-- ==========================================
+       BOTTOM CONTAINER: Target LAMP Server
+       ========================================== -->
+  <g id="bottom-target-server" filter="url(#cardShadow)">
+    <rect x="180" y="472" width="600" height="78" rx="12" fill="url(#serverCardGrad)" stroke="#10b981" stroke-width="1.5"/>
+    
+    <!-- Server / Terminal Icon -->
+    <g transform="translate(202, 489)">
+      <rect x="0" y="0" width="38" height="42" rx="5" fill="#064e3b" stroke="#34d399" stroke-width="1.5"/>
+      <line x1="6" y1="10" x2="32" y2="10" stroke="#34d399" stroke-width="1.5"/>
+      <circle cx="9" cy="20" r="2" fill="#34d399"/>
+      <line x1="16" y1="20" x2="30" y2="20" stroke="#6ee7b7" stroke-width="1.5"/>
+      <circle cx="9" cy="30" r="2" fill="#34d399"/>
+      <line x1="16" y1="30" x2="30" y2="30" stroke="#6ee7b7" stroke-width="1.5"/>
+    </g>
+
+    <!-- Server Titles & Destination URL -->
+    <text x="255" y="497" class="font-sans" font-size="15" font-weight="700" fill="#ffffff">DigitalOcean Ubuntu LAMP Droplet</text>
+    <rect x="580" y="485" width="185" height="18" rx="9" fill="#065f46" stroke="#10b981" stroke-width="1"/>
+    <text x="672.5" y="497.5" class="font-sans" font-size="9.5" font-weight="700" fill="#a7f3d0" text-anchor="middle">● PORT 80 (HTTP) / 443 (HTTPS)</text>
+
+    <g transform="translate(255, 508)">
+      <rect x="0" y="0" width="510" height="28" rx="6" fill="#022c22" stroke="#065f46" stroke-width="1"/>
+      <text x="12" y="18" class="font-mono" font-size="11.5" font-weight="600" fill="#f8fafc">
+        <tspan fill="#34d399">Resolved URL:</tspan>
+        <tspan fill="#67e8f9"> http://lamp.johnaedo.com </tspan>
+        <tspan fill="#64748b">──►</tspan>
+        <tspan fill="#fde68a"> &lt;YOUR_DROPLET_IP&gt;</tspan>
+      </text>
+    </g>
+  </g>
+</svg>
