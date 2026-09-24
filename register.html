@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/styles.css">
+    <title>Register</title>
+</head>
+<body>
+    <h1>Contacts App</h1>
+
+    <form id="register-form" method="post">
+        <p>Create a new account</p>
+
+        <label for="firstName">First Name</label>
+        <input type="text" id="firstName" name="firstName"
+                placeholder="Enter your first name"
+                autocomplete="given-name" maxlength="50" required />
+        <label for="lastName">Last Name</label>
+        <input type="text" id="lastName" name="lastName"
+                placeholder="Enter your last name"
+                autocomplete="family-name" maxlength="50" required />
+
+        <label for="login">Username</label>
+        <input type="text" id="login" name="login"
+                placeholder="Enter your username"
+                autocomplete="username" maxlength="50" minlength="3" required />
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password"
+                placeholder="Enter your password"
+                autocomplete="new-password" minlength="8" required />
+
+        <button type="submit">Register</button>
+        <p>Already have an account? <a href="index.html">Login here</a></p>
+    </form>
+</body>
+</html>
