@@ -14,6 +14,9 @@ loginForm.addEventListener('submit', async function (event) {
     loginMessage.textContent = 'Logging in...';
 
     try {
+        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('firstName');
+
         const response = await fetch('./api/index.php?action=login', {
             method: 'POST',
             headers: {
@@ -34,9 +37,15 @@ loginForm.addEventListener('submit', async function (event) {
             return;
         }
 
-        // For this step, confirm login before adding page navigation.
-        loginMessage.textContent = `Login successful. Welcome, ${result.firstName}!`;
-        loginForm.reset();
+        if (typeof result.token !== 'string' || !result.token) {
+            loginMessage.textContent = 'The server did not return a login session. Please try again.';
+            return;
+        }
+
+        // Keep the session token for requests made from the contacts page.
+        sessionStorage.setItem('token', result.token);
+        sessionStorage.setItem('firstName', result.firstName);
+        window.location.assign('./contacts.html');
     } catch (error) {
         loginMessage.textContent = 'Unable to complete login. Please try again later.';
     } finally {
