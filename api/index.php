@@ -41,7 +41,7 @@ try {
         if ($action === 'users') {
             requireAdmin($user);
 
-            $sql = 'SELECT ID AS id, Username AS login, FirstName AS firstName, LastName AS lastName,
+            $sql = 'SELECT ID AS id, Username AS login, Password, FirstName AS firstName, LastName AS lastName,
                            Role AS role, Active AS active, DateCreated AS createdAt, DateUpdated AS updatedAt
                     FROM Users';
             $params = [];
