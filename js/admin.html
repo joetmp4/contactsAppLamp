@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/styles.css">
+    <script src="./js/admin.js" defer></script>
+    <title>Admin Panel</title>
+</head>
+<body class="contacts-page">
+    <header class="app-header">
+        <h1>Admin Panel</h1>
+        <nav class="app-nav">
+            <span id="welcome-message"></span>
+            <a href="contacts.html">My Contacts</a>
+            <button id="logout-button" type="button">Logout</button>
+        </nav>
+    </header>
+
+    <main>
+        <section class="panel">
+            <h2>Create an admin account</h2>
+            <form id="create-admin-form">
+                <label for="admin-firstName">First Name</label>
+                <input type="text" id="admin-firstName" name="firstName" maxlength="50" required />
+
+                <label for="admin-lastName">Last Name</label>
+                <input type="text" id="admin-lastName" name="lastName" maxlength="50" required />
+
+                <label for="admin-login">Username</label>
+                <input type="text" id="admin-login" name="login" minlength="3" maxlength="50" required />
+
+                <label for="admin-password">Password</label>
+                <input type="password" id="admin-password" name="password" minlength="8" required />
+
+                <button type="submit">Create admin</button>
+                <p id="create-admin-message" role="status"></p>
+            </form>
+        </section>
+
+        <section class="panel">
+            <h2>Users</h2>
+            <input type="search" id="user-search-input" placeholder="Search users by name or username" />
+            <p id="users-message" role="status">Loading users...</p>
+            <table class="admin-table" id="users-table" hidden>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Username</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="users-table-body"></tbody>
+            </table>
+        </section>
+
+        <section class="panel">
+            <h2>All contacts</h2>
+            <input type="search" id="contact-search-input" placeholder="Search all contacts by name, email, or owner" />
+            <p id="all-contacts-message" role="status">Loading contacts...</p>
+            <table class="admin-table" id="contacts-table" hidden>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Owner</th>
+                    </tr>
+                </thead>
+                <tbody id="contacts-table-body"></tbody>
+            </table>
+        </section>
+    </main>
+</body>
+</html>
