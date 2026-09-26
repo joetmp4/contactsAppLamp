@@ -16,6 +16,7 @@ loginForm.addEventListener('submit', async function (event) {
     try {
         sessionStorage.removeItem('token');
         sessionStorage.removeItem('firstName');
+        sessionStorage.removeItem('isAdmin');
 
         const response = await fetch('./api/index.php?action=login', {
             method: 'POST',
@@ -42,7 +43,7 @@ loginForm.addEventListener('submit', async function (event) {
             return;
         }
 
-        // Keep the session token for requests made from the contacts page.
+        //Keep the session token
         sessionStorage.setItem('token', result.token);
         sessionStorage.setItem('firstName', result.firstName);
         window.location.assign('./contacts.html');
