@@ -67,3 +67,174 @@ form p {
 form p:empty {
     display: none;
 }
+
+// Added the Admin section, so if you have any questions let me know 
+.app-header {
+    width: 100%;
+    max-width: 900px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+ 
+.app-header h1 {
+    margin: 0;
+}
+ 
+.app-nav {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 0.95rem;
+    color: #444;
+}
+ 
+.app-nav a {
+    color: #2563eb;
+    text-decoration: none;
+}
+ 
+.app-nav a:hover {
+    text-decoration: underline;
+}
+ 
+.app-nav button {
+    width: auto;
+    margin-top: 0;
+    padding: 8px 14px;
+    background-color: #f3f4f6;
+}
+ 
+main {
+    width: 100%;
+    max-width: 900px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+ 
+.panel {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    padding: 24px;
+}
+ 
+.panel h2 {
+    margin-top: 0;
+}
+ 
+.panel > form {
+    box-shadow: none;
+    padding: 0;
+    max-width: none;
+}
+ 
+#search-input,
+#user-search-input,
+#contact-search-input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 16px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font: inherit;
+}
+ 
+.contacts-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+ 
+.contact-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 16px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+}
+ 
+.contact-info h3 {
+    margin: 0 0 6px;
+}
+ 
+.contact-info p {
+    margin: 2px 0;
+    color: #555;
+}
+ 
+.contact-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+ 
+.contact-actions button {
+    width: auto;
+    margin-top: 0;
+    padding: 8px 14px;
+}
+ 
+button.secondary {
+    background-color: #f3f4f6;
+}
+ 
+button.danger {
+    background-color: #fee2e2;
+    border-color: #fca5a5;
+    color: #b91c1c;
+}
+ 
+.edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+}
+ 
+.edit-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.9rem;
+    color: #444;
+}
+ 
+.edit-form button {
+    width: auto;
+    margin-top: 0;
+    padding: 8px 14px;
+}
+ 
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+ 
+.admin-table th,
+.admin-table td {
+    text-align: left;
+    padding: 10px 8px;
+    border-bottom: 1px solid #eee;
+}
+ 
+.admin-table th {
+    color: #555;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+ 
+.admin-table td .contact-actions {
+    margin: 0;
+}
