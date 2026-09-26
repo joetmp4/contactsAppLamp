@@ -8,12 +8,42 @@
     <title>Your Contacts</title>
 </head>
 <body class="contacts-page">
-    <main>
+    <header class="app-header">
         <h1>Contacts App</h1>
-        <p id="welcome-message"></p>
-        <h2>Your contacts</h2>
-        <p id="contacts-message" role="status">Loading contacts...</p>
-        <ul id="contacts-list"></ul>
+        <nav class="app-nav">
+            <span id="welcome-message"></span>
+            <a href="admin.html" id="admin-link" hidden>Admin Panel</a>
+            <button id="logout-button" type="button">Logout</button>
+        </nav>
+    </header>
+
+    <main>
+        <section class="panel">
+            <h2>Add a contact</h2>
+            <form id="add-contact-form">
+                <label for="add-firstName">First Name</label>
+                <input type="text" id="add-firstName" name="firstName" maxlength="50" required />
+
+                <label for="add-lastName">Last Name</label>
+                <input type="text" id="add-lastName" name="lastName" maxlength="50" required />
+
+                <label for="add-email">Email</label>
+                <input type="email" id="add-email" name="email" maxlength="100" />
+
+                <label for="add-phone">Phone</label>
+                <input type="tel" id="add-phone" name="phone" maxlength="20" />
+
+                <button type="submit">Add contact</button>
+                <p id="add-contact-message" role="status"></p>
+            </form>
+        </section>
+
+        <section class="panel">
+            <h2>Your contacts</h2>
+            <input type="search" id="search-input" placeholder="Search by name, email, or phone" />
+            <p id="contacts-message" role="status">Loading contacts...</p>
+            <ul id="contacts-list" class="contacts-list"></ul>
+        </section>
     </main>
 </body>
 </html>
