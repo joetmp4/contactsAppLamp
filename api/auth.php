@@ -5,9 +5,22 @@ require_once __DIR__ . '/response.php';
 
 function getBearerToken(): ?string
 {
-    $header = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
+    $header = null;
 
-    if (preg_match('/Bearer\s+(.+)/i', $header, $matches)) {
+    // Check standard header
+    if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
+        $header = $_SERVER['HTTP_AUTHORIZATION'];
+    } 
+    // Fallback for Apache
+    elseif (function_exists('apache_request_headers')) {
+        $requestHeaders = apache_request_headers();
+        $requestHeaders = array_combine(array_map('ucwords', array_keys($requestHeaders)), array_values($requestHeaders));
+        if (isset($requestHeaders['Authorization'])) {
+            $header = $requestHeaders['Authorization'];
+        }
+    }
+
+    if ($header && preg_match('/Bearer\s+(.+)/i', $header, $matches)) {
         return trim($matches[1]);
     }
 
