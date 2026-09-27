@@ -46,7 +46,14 @@ loginForm.addEventListener('submit', async function (event) {
         //Keep the session token
         sessionStorage.setItem('token', result.token);
         sessionStorage.setItem('firstName', result.firstName);
-        window.location.assign('./contacts.html');
+        //Determines whether to go to admin or normal
+        if (result.role === 'admin') {
+            sessionStorage.setItem('isAdmin', 'true');
+            window.location.assign('./admin.html');
+        } else {
+            sessionStorage.setItem('isAdmin', 'false');
+            window.location.assign('./contacts.html');
+        }
     } catch (error) {
         loginMessage.textContent = 'Unable to complete login. Please try again later.';
     } finally {
