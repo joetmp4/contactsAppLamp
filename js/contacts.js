@@ -219,7 +219,7 @@ addContactForm.addEventListener('submit', async (event) => {
     };
 
     try {
-        const response = await fetch('./api/index.php', {
+        const response = await fetch('./api/index.php?action=contact', {
             method: 'POST',
             headers: authHeaders({ 'Content-Type': 'application/json' }),
             body: JSON.stringify(newContact)
