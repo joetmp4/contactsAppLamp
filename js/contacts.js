@@ -82,8 +82,8 @@ function showEditForm(item, contact) {
     form.innerHTML = `
         <label>First Name<input type="text" name="firstName" value="${escapeAttr(contact.firstName)}" maxlength="50" required /></label>
         <label>Last Name<input type="text" name="lastName" value="${escapeAttr(contact.lastName)}" maxlength="50" required /></label>
-        <label>Email<input type="email" name="email" value="${escapeAttr(contact.email || '')}" maxlength="100" /></label>
-        <label>Phone<input type="tel" name="phone" value="${escapeAttr(contact.phone || '')}" maxlength="20" /></label>
+        <label>Email<input type="email" name="email" value="${escapeAttr(contact.email || '')}" maxlength="100" required /></label>
+        <label>Phone<input type="tel" name="phone" value="${escapeAttr(contact.phone || '')}" maxlength="20" required /></label>
         <div class="contact-actions">
             <button type="submit">Save</button>
             <button type="button" class="secondary" data-cancel>Cancel</button>
@@ -219,6 +219,8 @@ addContactForm.addEventListener('submit', async (event) => {
     };
 
     try {
+        // The backend requires ?action=contact - without it, the request
+        // falls through to "Unknown POST action" and nothing gets created.
         const response = await fetch('./api/index.php?action=contact', {
             method: 'POST',
             headers: authHeaders({ 'Content-Type': 'application/json' }),
@@ -241,15 +243,9 @@ addContactForm.addEventListener('submit', async (event) => {
     }
 });
 
-logoutButton.addEventListener('click', async () => {
-    try {
-        await fetch('./api/index.php?action=logout', {
-            method: 'POST',
-            headers: authHeaders()
-        });
-    } catch (error) {
-        // Ignore network errors on logout - clear the local session regardless.
-    }
+logoutButton.addEventListener('click', () => {
+    // The real backend has no logout endpoint - sessions just expire after
+    // SESSION_HOURS. Clearing the client-side token is enough for the UI.
     sessionStorage.clear();
     window.location.replace('./index.html');
 });
