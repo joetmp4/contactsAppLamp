@@ -47,7 +47,7 @@ loginForm.addEventListener('submit', async function (event) {
         sessionStorage.setItem('token', result.token);
         sessionStorage.setItem('firstName', result.firstName);
         //Determines whether to go to admin or normal
-        if (result.role === 'admin') {
+        if (result.isAdmin) {
             sessionStorage.setItem('isAdmin', 'true');
             window.location.assign('./admin.html');
         } else {
