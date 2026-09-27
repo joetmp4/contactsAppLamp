@@ -43,29 +43,38 @@ function handleAuthFailure(response) {
     return false;
 }
 
+function isActive(user) {
+    return Number(user.active) === 1;
+}
+
 function buildUserRow(user) {
     const row = document.createElement('tr');
 
     const nameCell = document.createElement('td');
     nameCell.textContent = `${user.firstName} ${user.lastName}`;
 
-    const usernameCell = document.createElement('td');
-    usernameCell.textContent = user.username;
+    const loginCell = document.createElement('td');
+    loginCell.textContent = user.login;
 
     const roleCell = document.createElement('td');
-    roleCell.textContent = user.isAdmin ? 'Admin' : 'User';
+    roleCell.textContent = user.role === 'admin' ? 'Admin' : 'User';
 
     const statusCell = document.createElement('td');
-    statusCell.textContent = user.isActive ? 'Active' : 'Disabled';
+    statusCell.textContent = isActive(user) ? 'Active' : 'Disabled';
 
     const actionsCell = document.createElement('td');
     actionsCell.className = 'contact-actions';
 
-    const toggleButton = document.createElement('button');
-    toggleButton.type = 'button';
-    toggleButton.textContent = user.isActive ? 'Disable' : 'Enable';
-    toggleButton.className = user.isActive ? 'danger' : 'secondary';
-    toggleButton.addEventListener('click', () => toggleActive(user));
+    // The API only supports disabling - there's currently no way to
+    // re-enable an account, so once disabled we just show the status.
+    if (isActive(user)) {
+        const disableButton = document.createElement('button');
+        disableButton.type = 'button';
+        disableButton.className = 'danger';
+        disableButton.textContent = 'Disable';
+        disableButton.addEventListener('click', () => disableUser(user));
+        actionsCell.append(disableButton);
+    }
 
     const resetButton = document.createElement('button');
     resetButton.type = 'button';
@@ -73,8 +82,8 @@ function buildUserRow(user) {
     resetButton.textContent = 'Reset password';
     resetButton.addEventListener('click', () => resetPassword(user));
 
-    actionsCell.append(toggleButton, resetButton);
-    row.append(nameCell, usernameCell, roleCell, statusCell, actionsCell);
+    actionsCell.append(resetButton);
+    row.append(nameCell, loginCell, roleCell, statusCell, actionsCell);
     return row;
 }
 
@@ -84,8 +93,8 @@ async function loadUsers(search = '') {
 
     try {
         const url = search
-            ? `./api/index.php?action=admin_users&q=${encodeURIComponent(search)}`
-            : './api/index.php?action=admin_users';
+            ? `./api/index.php?action=users&q=${encodeURIComponent(search)}`
+            : './api/index.php?action=users';
 
         const response = await fetch(url, { headers: authHeaders(), cache: 'no-store' });
         if (handleAuthFailure(response)) return;
@@ -112,37 +121,34 @@ async function loadUsers(search = '') {
     }
 }
 
-async function toggleActive(user) {
-    const nextActive = !user.isActive;
-    const verb = nextActive ? 'enable' : 'disable';
-
-    if (!window.confirm(`Are you sure you want to ${verb} ${user.username}?`)) {
+async function disableUser(user) {
+    if (!window.confirm(`Disable ${user.login}? They will be logged out immediately.`)) {
         return;
     }
 
     try {
-        const response = await fetch('./api/index.php?action=admin_toggle_active', {
-            method: 'POST',
+        const response = await fetch('./api/index.php?action=disableUser', {
+            method: 'PUT',
             headers: authHeaders({ 'Content-Type': 'application/json' }),
-            body: JSON.stringify({ userId: user.id, isActive: nextActive })
+            body: JSON.stringify({ userId: user.id })
         });
 
         if (handleAuthFailure(response)) return;
 
         const result = await response.json();
         if (!response.ok) {
-            window.alert(result.error || 'Could not update user.');
+            window.alert(result.error || 'Could not disable user.');
             return;
         }
 
         loadUsers(userSearchInput.value.trim());
     } catch (error) {
-        window.alert('Could not update user. Please try again.');
+        window.alert('Could not disable user. Please try again.');
     }
 }
 
 async function resetPassword(user) {
-    const newPassword = window.prompt(`New password for ${user.username} (8+ characters):`);
+    const newPassword = window.prompt(`New password for ${user.login} (8+ characters):`);
     if (!newPassword) {
         return;
     }
@@ -152,8 +158,8 @@ async function resetPassword(user) {
     }
 
     try {
-        const response = await fetch('./api/index.php?action=admin_reset_password', {
-            method: 'POST',
+        const response = await fetch('./api/index.php?action=changePassword', {
+            method: 'PUT',
             headers: authHeaders({ 'Content-Type': 'application/json' }),
             body: JSON.stringify({ userId: user.id, password: newPassword })
         });
@@ -166,7 +172,7 @@ async function resetPassword(user) {
             return;
         }
 
-        window.alert('Password updated.');
+        window.alert('Password updated. That user has been logged out of any existing sessions.');
     } catch (error) {
         window.alert('Could not reset password. Please try again.');
     }
@@ -185,7 +191,7 @@ function buildContactRow(contact) {
     phoneCell.textContent = contact.phone || 'Not provided';
 
     const ownerCell = document.createElement('td');
-    ownerCell.textContent = contact.ownerUsername;
+    ownerCell.textContent = contact.userLogin;
 
     row.append(nameCell, emailCell, phoneCell, ownerCell);
     return row;
@@ -197,8 +203,8 @@ async function loadAllContacts(search = '') {
 
     try {
         const url = search
-            ? `./api/index.php?action=admin_contacts&q=${encodeURIComponent(search)}`
-            : './api/index.php?action=admin_contacts';
+            ? `./api/index.php?action=allContacts&q=${encodeURIComponent(search)}`
+            : './api/index.php?action=allContacts';
 
         const response = await fetch(url, { headers: authHeaders(), cache: 'no-store' });
         if (handleAuthFailure(response)) return;
@@ -249,7 +255,7 @@ createAdminForm.addEventListener('submit', async (event) => {
     };
 
     try {
-        const response = await fetch('./api/index.php?action=admin_create_admin', {
+        const response = await fetch('./api/index.php?action=createAdmin', {
             method: 'POST',
             headers: authHeaders({ 'Content-Type': 'application/json' }),
             body: JSON.stringify(newAdmin)
@@ -271,15 +277,9 @@ createAdminForm.addEventListener('submit', async (event) => {
     }
 });
 
-logoutButton.addEventListener('click', async () => {
-    try {
-        await fetch('./api/index.php?action=logout', {
-            method: 'POST',
-            headers: authHeaders()
-        });
-    } catch (error) {
-        // Ignore network errors on logout - clear the local session regardless.
-    }
+logoutButton.addEventListener('click', () => {
+    // The real backend has no logout endpoint - sessions just expire after
+    // SESSION_HOURS. Clearing the client-side token is enough for the UI.
     sessionStorage.clear();
     window.location.replace('./index.html');
 });
