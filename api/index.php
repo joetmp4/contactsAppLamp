@@ -1,9 +1,7 @@
 <?php
-
 require_once __DIR__ . '/response.php';
 require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/auth.php';
-
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
@@ -23,10 +21,7 @@ $q = trim($_GET['q'] ?? '');
 
 try {
     $db = getDb();
-
-    /*
-     * GET
-     */
+    //Get Method
     if ($method === 'GET') {
         if (isset($_GET['ping'])) {
             jsonResponse([
@@ -36,20 +31,16 @@ try {
         }
 
         $user = requireAuth();
-
-        // Admin-only user search.
+        //Admin Search
         if ($action === 'users') {
             requireAdmin($user);
 
             $sql = 'SELECT ID AS id, Username AS login, Password, FirstName AS firstName, LastName AS lastName,
-                           Role AS role, Active AS active, DateCreated AS createdAt, DateUpdated AS updatedAt
-                    FROM Users';
+                           Role AS role, Active AS active, DateCreated AS createdAt, DateUpdated AS updatedAt FROM Users';
             $params = [];
 
             if ($q !== '') {
-                $sql .= ' WHERE Username LIKE ?
-                          OR FirstName LIKE ?
-                          OR LastName LIKE ?';
+                $sql .= ' WHERE Username LIKE ? OR FirstName LIKE ? OR LastName LIKE ?';
                 $like = '%' . $q . '%';
                 $params = [$like, $like, $like];
             }
@@ -62,27 +53,21 @@ try {
             jsonResponse(['users' => $stmt->fetchAll()]);
         }
 
-        // Admin-only search across all contacts.
+        //Admin Search for Contacts
         if ($action === 'allContacts') {
             requireAdmin($user);
 
-            $sql = 'SELECT c.ID AS id, c.UserID AS userId, c.FirstName AS firstName, c.LastName AS lastName,
-                           c.Email AS email, c.PhoneNumber AS phone,
-                           u.Username AS userLogin,
-                           u.FirstName AS userFirstName,
-                           u.LastName AS userLastName
+            $sql = 'SELECT c.ID AS id, c.UserID AS userId, c.FirstName AS firstName, c.LastName AS lastName, c.Email AS email, c.PhoneNumber AS phone,
+                           u.Username AS userLogin, u.FirstName AS userFirstName, u.LastName AS userLastName
                     FROM Contacts c
                     INNER JOIN Users u ON u.ID = c.UserID';
             $params = [];
 
             if ($q !== '') {
-                $sql .= ' WHERE c.FirstName LIKE ?
-                          OR c.LastName LIKE ?
-                          OR c.Email LIKE ?
-                          OR c.PhoneNumber LIKE ?
-                          OR u.Username LIKE ?
-                          OR u.FirstName LIKE ?
-                          OR u.LastName LIKE ?';
+                $sql .= ' WHERE c.FirstName LIKE ? OR c.LastName LIKE ? OR c.Email LIKE ? OR c.PhoneNumber LIKE ? 
+                        OR u.Username LIKE ? 
+                        OR u.FirstName LIKE ?
+                        OR u.LastName LIKE ?';
 
                 $like = '%' . $q . '%';
                 $params = [$like, $like, $like, $like, $like, $like, $like];
@@ -96,12 +81,11 @@ try {
             jsonResponse(['contacts' => $stmt->fetchAll()]);
         }
 
-        // Get one contact. Users can only get their own; admins can get any.
+        //User only gets their contact admin can span all
         if ($id > 0) {
             if ($user['role'] === 'admin') {
                 $stmt = $db->prepare(
-                    'SELECT c.ID AS id, c.UserID AS userId, c.FirstName AS firstName, c.LastName AS lastName,
-                            c.Email AS email, c.PhoneNumber AS phone,
+                    'SELECT c.ID AS id, c.UserID AS userId, c.FirstName AS firstName, c.LastName AS lastName, c.Email AS email, c.PhoneNumber AS phone,
                             u.Username AS userLogin
                      FROM Contacts c
                      INNER JOIN Users u ON u.ID = c.UserID
@@ -111,38 +95,29 @@ try {
                 $stmt->execute([$id]);
             } else {
                 $stmt = $db->prepare(
-                    'SELECT ID AS id, UserID AS userId, FirstName AS firstName, LastName AS lastName,
-                            Email AS email, PhoneNumber AS phone
+                    'SELECT ID AS id, UserID AS userId, FirstName AS firstName, LastName AS lastName, Email AS email, PhoneNumber AS phone
                      FROM Contacts
                      WHERE ID = ? AND UserID = ?
                      LIMIT 1'
                 );
                 $stmt->execute([$id, $user['id']]);
             }
-
             $contact = $stmt->fetch();
-
+            //Contact Not Found Error
             if (!$contact) {
                 jsonResponse(['error' => 'Contact not found.'], 404);
             }
-
             jsonResponse(['contact' => $contact]);
         }
 
-        // Default search: current user's contacts only.
-        $sql = 'SELECT ID AS id, UserID AS userId, FirstName AS firstName, LastName AS lastName,
-                       Email AS email, PhoneNumber AS phone
+        //Basic Search
+        $sql = 'SELECT ID AS id, UserID AS userId, FirstName AS firstName, LastName AS lastName, Email AS email, PhoneNumber AS phone
                 FROM Contacts
                 WHERE UserID = ?';
         $params = [$user['id']];
 
         if ($q !== '') {
-            $sql .= ' AND (
-                        FirstName LIKE ?
-                        OR LastName LIKE ?
-                        OR Email LIKE ?
-                        OR PhoneNumber LIKE ?
-                      )';
+            $sql .= ' AND (FirstName LIKE ? OR LastName LIKE ? OR Email LIKE ? OR PhoneNumber LIKE ?)';
             $like = '%' . $q . '%';
             array_push($params, $like, $like, $like, $like);
         }
@@ -154,27 +129,23 @@ try {
 
         jsonResponse(['contacts' => $stmt->fetchAll()]);
     }
-
-    /*
-     * POST
-     */
+    //Post Method
     if ($method === 'POST') {
         $data = readJsonBody();
 
-        // Public login.
+        //Public Login Just checking login and password json 
         if ($action === 'login' || ($action === '' && isset($data['login']) && isset($data['password']))) {
             requireFields($data, ['login', 'password']);
 
             $stmt = $db->prepare(
-                'SELECT ID AS id, Username AS login, Password AS password, FirstName AS firstName,
-                        LastName AS lastName, Role AS role, Active AS active
+                'SELECT ID AS id, Username AS login, Password AS password, FirstName AS firstName, LastName AS lastName, Role AS role, Active AS active
                  FROM Users
                  WHERE Username = ?
                  LIMIT 1'
             );
             $stmt->execute([trim($data['login'])]);
             $account = $stmt->fetch();
-
+            
             if (!$account || !password_verify($data['password'], $account['password'])) {
                 jsonResponse(['error' => 'Invalid username or password.'], 401);
             }
@@ -204,7 +175,7 @@ try {
             ]);
         }
 
-        // Public registration. New accounts are always normal users.
+        //Website Registeration (Make them basic Users)
         if ($action === 'register') {
             requireFields($data, ['login', 'password', 'firstName', 'lastName']);
 
@@ -212,11 +183,11 @@ try {
             $password = (string)$data['password'];
             $firstName = trim($data['firstName']);
             $lastName = trim($data['lastName']);
-
+            //Make username 3-50 characters doesn't specify what characters
             if (strlen($login) < 3 || strlen($login) > 50) {
                 jsonResponse(['error' => 'Login must be 3-50 characters.'], 400);
             }
-
+            //Require password to be length 8 don't care about characters
             if (strlen($password) < 8) {
                 jsonResponse(['error' => 'Password must be at least 8 characters.'], 400);
             }
@@ -241,12 +212,12 @@ try {
                 'id' => (int)$db->lastInsertId(),
                 'login' => $login,
                 'role' => 'user'
-            ], 201);
+                ], 201);
         }
 
         $user = requireAuth();
 
-        // Create a contact for the currently logged-in user.
+        //Makes contact for current user
         if ($action === 'contact' || $action === 'createContact') {
             requireFields($data, ['firstName', 'lastName', 'email', 'phone']);
 
@@ -268,7 +239,7 @@ try {
             ], 201);
         }
 
-        // Admin-only creation of another admin account.
+        //Admin making another Admin
         if ($action === 'createAdmin') {
             requireAdmin($user);
             requireFields($data, ['login', 'password', 'firstName', 'lastName']);
@@ -309,15 +280,12 @@ try {
 
         jsonResponse(['error' => 'Unknown POST action.'], 400);
     }
-
-    /*
-     * PUT
-     */
+    //Put Method
     if ($method === 'PUT') {
         $data = readJsonBody();
         $user = requireAuth();
 
-        // Update a contact. Users can update their own contacts; admins can update any.
+        //Update Contact User only theirs and Admin any contact
         if ($action === 'contact' || $action === 'updateContact' || $id > 0) {
             if ($id <= 0) {
                 jsonResponse(['error' => 'A valid contact id is required.'], 400);
@@ -361,7 +329,7 @@ try {
             jsonResponse(['message' => 'Contact updated.', 'id' => $id]);
         }
 
-        // Admin disables an account. The admin cannot disable the account currently in use.
+        //Admin Disables an Account
         if ($action === 'disableUser') {
             requireAdmin($user);
 
@@ -382,7 +350,7 @@ try {
                 jsonResponse(['error' => 'User not found or already disabled.'], 404);
             }
 
-            // Invalidate existing sessions for the disabled user.
+            //Kicks user out of session if their account is disabled
             $stmt = $db->prepare('DELETE FROM Sessions WHERE UserID = ?');
             $stmt->execute([$targetUserId]);
 
@@ -392,7 +360,7 @@ try {
             ]);
         }
 
-        // Admin changes another user's password.
+        //Admin Change Password
         if ($action === 'changePassword') {
             requireAdmin($user);
 
@@ -419,7 +387,7 @@ try {
                 jsonResponse(['error' => 'User not found or password is unchanged.'], 404);
             }
 
-            // Force all existing sessions for the target user to log out.
+            //Make the user log out
             $stmt = $db->prepare('DELETE FROM Sessions WHERE UserID = ?');
             $stmt->execute([$targetUserId]);
 
@@ -431,10 +399,7 @@ try {
 
         jsonResponse(['error' => 'Unknown PUT action.'], 400);
     }
-
-    /*
-     * DELETE
-     */
+    //Delete Method
     if ($method === 'DELETE') {
         $user = requireAuth();
 
@@ -467,7 +432,7 @@ try {
 } catch (PDOException $e) {
     error_log($e->getMessage());
 
-    // Do not expose database credentials/details to the browser.
+    //Friends database got hacked so I made sure to hide our credentials.
     jsonResponse([
         'error' => 'Database error. Check the PHP/MySQL configuration and server logs.'
     ], 500);
