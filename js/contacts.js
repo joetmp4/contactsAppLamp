@@ -219,8 +219,7 @@ addContactForm.addEventListener('submit', async (event) => {
     };
 
     try {
-        // The backend requires ?action=contact - without it, the request
-        // falls through to "Unknown POST action" and nothing gets created.
+        //The backend requires ?action=contact had to look this one up I was missing the ?action=contact section so it wasn't working
         const response = await fetch('./api/index.php?action=contact', {
             method: 'POST',
             headers: authHeaders({ 'Content-Type': 'application/json' }),
@@ -244,8 +243,6 @@ addContactForm.addEventListener('submit', async (event) => {
 });
 
 logoutButton.addEventListener('click', () => {
-    // The real backend has no logout endpoint - sessions just expire after
-    // SESSION_HOURS. Clearing the client-side token is enough for the UI.
     sessionStorage.clear();
     window.location.replace('./index.html');
 });
