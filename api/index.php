@@ -2,6 +2,7 @@
 require_once __DIR__ . '/response.php';
 require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/auth.php';
+
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
@@ -14,154 +15,163 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 header('Content-Type: application/json; charset=utf-8');
 
+//Helpers
+function run(PDO $db, string $sql, array $params = []): PDOStatement {
+    $stmt = $db->prepare($sql);
+    $stmt->execute($params);
+    return $stmt;
+}
+
+//Just matching columns
+function likeClause(array $cols, string $q): array {
+    return ['(' . implode(' LIKE ? OR ', $cols) . ' LIKE ?)', array_fill(0, count($cols), "%$q%")];
+}
+
+//Admins can touch any row and normal users only their own
+function ownerScope(array $user, string $col = 'UserID'): array {
+    return $user['role'] === 'admin' ? ['', []] : [" AND $col = ?", [$user['id']]];
+}
+
+function contactFields(array $data): array {
+    requireFields($data, ['firstName', 'lastName', 'email', 'phone']);
+    return [trim($data['firstName']), trim($data['lastName']), trim($data['email']), trim($data['phone'])];
+}
+
+function checkPassword($password): void {
+    if (strlen((string)$password) < 8) {
+        jsonResponse(['error' => 'Password must be at least 8 characters.'], 400);
+    }
+}
+
+function createUser(PDO $db, array $data, string $role): void {
+    requireFields($data, ['login', 'password', 'firstName', 'lastName']);
+    $login = trim($data['login']);
+
+    if (strlen($login) < 3 || strlen($login) > 50) {
+        jsonResponse(['error' => 'Login must be 3-50 characters.'], 400);
+    }
+    checkPassword($data['password']);
+
+    if (run($db, 'SELECT ID FROM Users WHERE Username = ? LIMIT 1', [$login])->fetch()) {
+        jsonResponse(['error' => 'That login is already in use.'], 409);
+    }
+
+    run($db,
+        'INSERT INTO Users (FirstName, LastName, Username, Password, Role, Active) VALUES (?, ?, ?, ?, ?, 1)',
+        [trim($data['firstName']), trim($data['lastName']), $login, password_hash($data['password'], PASSWORD_DEFAULT), $role]
+    );
+
+    jsonResponse([
+        'message' => $role === 'admin' ? 'Administrator account created.' : 'Registration successful.',
+        'id' => (int)$db->lastInsertId(),
+        'login' => $login,
+        'role' => $role
+    ], 201);
+}
+
+//Request
 $method = $_SERVER['REQUEST_METHOD'];
 $action = $_GET['action'] ?? '';
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 $q = trim($_GET['q'] ?? '');
 
+$contactCols = 'ID AS id, UserID AS userId, FirstName AS firstName, LastName AS lastName, Email AS email, PhoneNumber AS phone';
+
 try {
     $db = getDb();
-    //Get Method
+
+    //GET
     if ($method === 'GET') {
         if (isset($_GET['ping'])) {
-            jsonResponse([
-                'status' => 'OK',
-                'timestamp' => time()
-            ]);
+            jsonResponse(['status' => 'OK', 'timestamp' => time()]);
         }
 
         $user = requireAuth();
-        //Admin Search
+
+        //Admin: search users (Password column intentionally NOT selected)
         if ($action === 'users') {
             requireAdmin($user);
-
-            $sql = 'SELECT ID AS id, Username AS login, Password, FirstName AS firstName, LastName AS lastName,
-                           Role AS role, Active AS active, DateCreated AS createdAt, DateUpdated AS updatedAt FROM Users';
+            $sql = 'SELECT ID AS id, Username AS login, FirstName AS firstName, LastName AS lastName,
+                           Role AS role, Active AS active, DateCreated AS createdAt, DateUpdated AS updatedAt
+                    FROM Users';
             $params = [];
-
             if ($q !== '') {
-                $sql .= ' WHERE Username LIKE ? OR FirstName LIKE ? OR LastName LIKE ?';
-                $like = '%' . $q . '%';
-                $params = [$like, $like, $like];
+                [$where, $params] = likeClause(['Username', 'FirstName', 'LastName'], $q);
+                $sql .= " WHERE $where";
             }
-
-            $sql .= ' ORDER BY ID LIMIT 100';
-
-            $stmt = $db->prepare($sql);
-            $stmt->execute($params);
-
-            jsonResponse(['users' => $stmt->fetchAll()]);
+            jsonResponse(['users' => run($db, "$sql ORDER BY ID LIMIT 100", $params)->fetchAll()]);
         }
 
-        //Admin Search for Contacts
+        //Admin: search all contacts
         if ($action === 'allContacts') {
             requireAdmin($user);
-
-            $sql = 'SELECT c.ID AS id, c.UserID AS userId, c.FirstName AS firstName, c.LastName AS lastName, c.Email AS email, c.PhoneNumber AS phone,
+            $sql = 'SELECT c.ID AS id, c.UserID AS userId, c.FirstName AS firstName, c.LastName AS lastName,
+                           c.Email AS email, c.PhoneNumber AS phone,
                            u.Username AS userLogin, u.FirstName AS userFirstName, u.LastName AS userLastName
-                    FROM Contacts c
-                    INNER JOIN Users u ON u.ID = c.UserID';
+                    FROM Contacts c INNER JOIN Users u ON u.ID = c.UserID';
             $params = [];
-
             if ($q !== '') {
-                $sql .= ' WHERE c.FirstName LIKE ? OR c.LastName LIKE ? OR c.Email LIKE ? OR c.PhoneNumber LIKE ? 
-                        OR u.Username LIKE ? 
-                        OR u.FirstName LIKE ?
-                        OR u.LastName LIKE ?';
-
-                $like = '%' . $q . '%';
-                $params = [$like, $like, $like, $like, $like, $like, $like];
+                [$where, $params] = likeClause(
+                    ['c.FirstName', 'c.LastName', 'c.Email', 'c.PhoneNumber', 'u.Username', 'u.FirstName', 'u.LastName'], $q
+                );
+                $sql .= " WHERE $where";
             }
-
-            $sql .= ' ORDER BY c.ID LIMIT 100';
-
-            $stmt = $db->prepare($sql);
-            $stmt->execute($params);
-
-            jsonResponse(['contacts' => $stmt->fetchAll()]);
+            jsonResponse(['contacts' => run($db, "$sql ORDER BY c.ID LIMIT 100", $params)->fetchAll()]);
         }
 
-        //User only gets their contact admin can span all
+        //Single contact (users: own only, admins: any)
         if ($id > 0) {
-            if ($user['role'] === 'admin') {
-                $stmt = $db->prepare(
-                    'SELECT c.ID AS id, c.UserID AS userId, c.FirstName AS firstName, c.LastName AS lastName, c.Email AS email, c.PhoneNumber AS phone,
-                            u.Username AS userLogin
-                     FROM Contacts c
-                     INNER JOIN Users u ON u.ID = c.UserID
-                     WHERE c.ID = ?
-                     LIMIT 1'
-                );
-                $stmt->execute([$id]);
-            } else {
-                $stmt = $db->prepare(
-                    'SELECT ID AS id, UserID AS userId, FirstName AS firstName, LastName AS lastName, Email AS email, PhoneNumber AS phone
-                     FROM Contacts
-                     WHERE ID = ? AND UserID = ?
-                     LIMIT 1'
-                );
-                $stmt->execute([$id, $user['id']]);
-            }
-            $contact = $stmt->fetch();
-            //Contact Not Found Error
+            [$scope, $scopeParams] = ownerScope($user, 'c.UserID');
+            $contact = run($db,
+                "SELECT c.ID AS id, c.UserID AS userId, c.FirstName AS firstName, c.LastName AS lastName,
+                        c.Email AS email, c.PhoneNumber AS phone, u.Username AS userLogin
+                 FROM Contacts c INNER JOIN Users u ON u.ID = c.UserID
+                 WHERE c.ID = ?$scope LIMIT 1",
+                [$id, ...$scopeParams]
+            )->fetch();
+
             if (!$contact) {
                 jsonResponse(['error' => 'Contact not found.'], 404);
             }
             jsonResponse(['contact' => $contact]);
         }
 
-        //Basic Search
-        $sql = 'SELECT ID AS id, UserID AS userId, FirstName AS firstName, LastName AS lastName, Email AS email, PhoneNumber AS phone
-                FROM Contacts
-                WHERE UserID = ?';
+        //List / search own contacts
+        $sql = "SELECT $contactCols FROM Contacts WHERE UserID = ?";
         $params = [$user['id']];
-
         if ($q !== '') {
-            $sql .= ' AND (FirstName LIKE ? OR LastName LIKE ? OR Email LIKE ? OR PhoneNumber LIKE ?)';
-            $like = '%' . $q . '%';
-            array_push($params, $like, $like, $like, $like);
+            [$where, $like] = likeClause(['FirstName', 'LastName', 'Email', 'PhoneNumber'], $q);
+            $sql .= " AND $where";
+            $params = [...$params, ...$like];
         }
-
-        $sql .= ' ORDER BY LastName, FirstName LIMIT 100';
-
-        $stmt = $db->prepare($sql);
-        $stmt->execute($params);
-
-        jsonResponse(['contacts' => $stmt->fetchAll()]);
+        jsonResponse(['contacts' => run($db, "$sql ORDER BY LastName, FirstName LIMIT 100", $params)->fetchAll()]);
     }
-    //Post Method
+
+    //POST
     if ($method === 'POST') {
         $data = readJsonBody();
 
-        //Public Login Just checking login and password json 
-        if ($action === 'login' || ($action === '' && isset($data['login']) && isset($data['password']))) {
+        //Login
+        if ($action === 'login' || ($action === '' && isset($data['login'], $data['password']))) {
             requireFields($data, ['login', 'password']);
 
-            $stmt = $db->prepare(
-                'SELECT ID AS id, Username AS login, Password AS password, FirstName AS firstName, LastName AS lastName, Role AS role, Active AS active
-                 FROM Users
-                 WHERE Username = ?
-                 LIMIT 1'
-            );
-            $stmt->execute([trim($data['login'])]);
-            $account = $stmt->fetch();
-            
+            $account = run($db,
+                'SELECT ID AS id, Username AS login, Password AS password, FirstName AS firstName,
+                        LastName AS lastName, Role AS role, Active AS active
+                 FROM Users WHERE Username = ? LIMIT 1',
+                [trim($data['login'])]
+            )->fetch();
+
             if (!$account || !password_verify($data['password'], $account['password'])) {
                 jsonResponse(['error' => 'Invalid username or password.'], 401);
             }
-
             if ((int)$account['active'] !== 1) {
                 jsonResponse(['error' => 'This account is disabled.'], 403);
             }
 
             $token = bin2hex(random_bytes(32));
             $expiresAt = date('Y-m-d H:i:s', time() + (SESSION_HOURS * 3600));
-
-            $stmt = $db->prepare(
-                'INSERT INTO Sessions (UserID, Token, ExpiresAt)
-                 VALUES (?, ?, ?)'
-            );
-            $stmt->execute([$account['id'], $token, $expiresAt]);
+            run($db, 'INSERT INTO Sessions (UserID, Token, ExpiresAt) VALUES (?, ?, ?)', [$account['id'], $token, $expiresAt]);
 
             jsonResponse([
                 'id' => (int)$account['id'],
@@ -175,231 +185,92 @@ try {
             ]);
         }
 
-        //Website Registeration (Make them basic Users)
+        //Public registration (always a basic user)
         if ($action === 'register') {
-            requireFields($data, ['login', 'password', 'firstName', 'lastName']);
-
-            $login = trim($data['login']);
-            $password = (string)$data['password'];
-            $firstName = trim($data['firstName']);
-            $lastName = trim($data['lastName']);
-            //Make username 3-50 characters doesn't specify what characters
-            if (strlen($login) < 3 || strlen($login) > 50) {
-                jsonResponse(['error' => 'Login must be 3-50 characters.'], 400);
-            }
-            //Require password to be length 8 don't care about characters
-            if (strlen($password) < 8) {
-                jsonResponse(['error' => 'Password must be at least 8 characters.'], 400);
-            }
-
-            $stmt = $db->prepare('SELECT ID FROM Users WHERE Username = ? LIMIT 1');
-            $stmt->execute([$login]);
-
-            if ($stmt->fetch()) {
-                jsonResponse(['error' => 'That login is already in use.'], 409);
-            }
-
-            $hash = password_hash($password, PASSWORD_DEFAULT);
-
-            $stmt = $db->prepare(
-                'INSERT INTO Users (FirstName, LastName, Username, Password, Role, Active)
-                 VALUES (?, ?, ?, ?, "user", 1)'
-            );
-            $stmt->execute([$firstName, $lastName, $login, $hash]);
-
-            jsonResponse([
-                'message' => 'Registration successful.',
-                'id' => (int)$db->lastInsertId(),
-                'login' => $login,
-                'role' => 'user'
-                ], 201);
+            createUser($db, $data, 'user');
         }
 
         $user = requireAuth();
 
-        //Makes contact for current user
+        //Create contact for current user
         if ($action === 'contact' || $action === 'createContact') {
-            requireFields($data, ['firstName', 'lastName', 'email', 'phone']);
-
-            $stmt = $db->prepare(
-                'INSERT INTO Contacts (UserID, FirstName, LastName, Email, PhoneNumber)
-                 VALUES (?, ?, ?, ?, ?)'
+            run($db,
+                'INSERT INTO Contacts (UserID, FirstName, LastName, Email, PhoneNumber) VALUES (?, ?, ?, ?, ?)',
+                [$user['id'], ...contactFields($data)]
             );
-            $stmt->execute([
-                $user['id'],
-                trim($data['firstName']),
-                trim($data['lastName']),
-                trim($data['email']),
-                trim($data['phone'])
-            ]);
-
-            jsonResponse([
-                'message' => 'Contact created.',
-                'id' => (int)$db->lastInsertId()
-            ], 201);
+            jsonResponse(['message' => 'Contact created.', 'id' => (int)$db->lastInsertId()], 201);
         }
 
-        //Admin making another Admin
+        //Admin creates another admin
         if ($action === 'createAdmin') {
             requireAdmin($user);
-            requireFields($data, ['login', 'password', 'firstName', 'lastName']);
-
-            if (strlen((string)$data['password']) < 8) {
-                jsonResponse(['error' => 'Password must be at least 8 characters.'], 400);
-            }
-
-            $login = trim($data['login']);
-
-            $stmt = $db->prepare('SELECT ID FROM Users WHERE Username = ? LIMIT 1');
-            $stmt->execute([$login]);
-
-            if ($stmt->fetch()) {
-                jsonResponse(['error' => 'That login is already in use.'], 409);
-            }
-
-            $hash = password_hash($data['password'], PASSWORD_DEFAULT);
-
-            $stmt = $db->prepare(
-                'INSERT INTO Users (FirstName, LastName, Username, Password, Role, Active)
-                 VALUES (?, ?, ?, ?, "admin", 1)'
-            );
-            $stmt->execute([
-                trim($data['firstName']),
-                trim($data['lastName']),
-                $login,
-                $hash
-            ]);
-
-            jsonResponse([
-                'message' => 'Administrator account created.',
-                'id' => (int)$db->lastInsertId(),
-                'login' => $login,
-                'role' => 'admin'
-            ], 201);
+            createUser($db, $data, 'admin');
         }
 
         jsonResponse(['error' => 'Unknown POST action.'], 400);
     }
-    //Put Method
+
+    //PUT
     if ($method === 'PUT') {
         $data = readJsonBody();
         $user = requireAuth();
 
-        //Update Contact User only theirs and Admin any contact
+        //Update contact (users: own only, admins: any)
         if ($action === 'contact' || $action === 'updateContact' || $id > 0) {
             if ($id <= 0) {
                 jsonResponse(['error' => 'A valid contact id is required.'], 400);
             }
 
-            requireFields($data, ['firstName', 'lastName', 'email', 'phone']);
-
-            if ($user['role'] === 'admin') {
-                $stmt = $db->prepare(
-                    'UPDATE Contacts
-                     SET FirstName = ?, LastName = ?, Email = ?, PhoneNumber = ?
-                     WHERE ID = ?'
-                );
-                $stmt->execute([
-                    trim($data['firstName']),
-                    trim($data['lastName']),
-                    trim($data['email']),
-                    trim($data['phone']),
-                    $id
-                ]);
-            } else {
-                $stmt = $db->prepare(
-                    'UPDATE Contacts
-                     SET FirstName = ?, LastName = ?, Email = ?, PhoneNumber = ?
-                     WHERE ID = ? AND UserID = ?'
-                );
-                $stmt->execute([
-                    trim($data['firstName']),
-                    trim($data['lastName']),
-                    trim($data['email']),
-                    trim($data['phone']),
-                    $id,
-                    $user['id']
-                ]);
-            }
+            [$scope, $scopeParams] = ownerScope($user);
+            $stmt = run($db,
+                "UPDATE Contacts SET FirstName = ?, LastName = ?, Email = ?, PhoneNumber = ? WHERE ID = ?$scope",
+                [...contactFields($data), $id, ...$scopeParams]
+            );
 
             if ($stmt->rowCount() === 0) {
                 jsonResponse(['error' => 'Contact not found or no changes were made.'], 404);
             }
-
             jsonResponse(['message' => 'Contact updated.', 'id' => $id]);
         }
 
-        //Admin Disables an Account
-        if ($action === 'disableUser') {
+        //Admin-only actions below both need a target user
+        if ($action === 'disableUser' || $action === 'changePassword') {
             requireAdmin($user);
-
-            $targetUserId = isset($data['userId']) ? (int)$data['userId'] : 0;
+            $targetUserId = (int)($data['userId'] ?? 0);
 
             if ($targetUserId <= 0) {
                 jsonResponse(['error' => 'A valid userId is required.'], 400);
             }
 
-            if ($targetUserId === (int)$user['id']) {
-                jsonResponse(['error' => 'You cannot disable your own account.'], 400);
+            if ($action === 'disableUser') {
+                if ($targetUserId === (int)$user['id']) {
+                    jsonResponse(['error' => 'You cannot disable your own account.'], 400);
+                }
+                $stmt = run($db, 'UPDATE Users SET Active = 0 WHERE ID = ?', [$targetUserId]);
+                $notFound = 'User not found or already disabled.';
+                $message = 'User disabled.';
+            } else {
+                requireFields($data, ['password']);
+                checkPassword($data['password']);
+                $stmt = run($db, 'UPDATE Users SET Password = ? WHERE ID = ?',
+                    [password_hash($data['password'], PASSWORD_DEFAULT), $targetUserId]);
+                $notFound = 'User not found or password is unchanged.';
+                $message = 'Password changed. Existing sessions were invalidated.';
             }
-
-            $stmt = $db->prepare('UPDATE Users SET Active = 0 WHERE ID = ?');
-            $stmt->execute([$targetUserId]);
 
             if ($stmt->rowCount() === 0) {
-                jsonResponse(['error' => 'User not found or already disabled.'], 404);
+                jsonResponse(['error' => $notFound], 404);
             }
 
-            //Kicks user out of session if their account is disabled
-            $stmt = $db->prepare('DELETE FROM Sessions WHERE UserID = ?');
-            $stmt->execute([$targetUserId]);
-
-            jsonResponse([
-                'message' => 'User disabled.',
-                'userId' => $targetUserId
-            ]);
-        }
-
-        //Admin Change Password
-        if ($action === 'changePassword') {
-            requireAdmin($user);
-
-            $targetUserId = isset($data['userId']) ? (int)$data['userId'] : 0;
-
-            if ($targetUserId <= 0) {
-                jsonResponse(['error' => 'A valid userId is required.'], 400);
-            }
-
-            requireFields($data, ['password']);
-
-            if (strlen((string)$data['password']) < 8) {
-                jsonResponse(['error' => 'Password must be at least 8 characters.'], 400);
-            }
-
-            $hash = password_hash($data['password'], PASSWORD_DEFAULT);
-
-            $stmt = $db->prepare(
-                'UPDATE Users SET Password = ? WHERE ID = ?'
-            );
-            $stmt->execute([$hash, $targetUserId]);
-
-            if ($stmt->rowCount() === 0) {
-                jsonResponse(['error' => 'User not found or password is unchanged.'], 404);
-            }
-
-            //Make the user log out
-            $stmt = $db->prepare('DELETE FROM Sessions WHERE UserID = ?');
-            $stmt->execute([$targetUserId]);
-
-            jsonResponse([
-                'message' => 'Password changed. Existing sessions were invalidated.',
-                'userId' => $targetUserId
-            ]);
+            //Kick the user out of any active sessions
+            run($db, 'DELETE FROM Sessions WHERE UserID = ?', [$targetUserId]);
+            jsonResponse(['message' => $message, 'userId' => $targetUserId]);
         }
 
         jsonResponse(['error' => 'Unknown PUT action.'], 400);
     }
-    //Delete Method
+
+    //DELETE
     if ($method === 'DELETE') {
         $user = requireAuth();
 
@@ -407,35 +278,21 @@ try {
             jsonResponse(['error' => 'A valid contact id is required.'], 400);
         }
 
-        if ($user['role'] === 'admin') {
-            $stmt = $db->prepare('DELETE FROM Contacts WHERE ID = ?');
-            $stmt->execute([$id]);
-        } else {
-            $stmt = $db->prepare(
-                'DELETE FROM Contacts WHERE ID = ? AND UserID = ?'
-            );
-            $stmt->execute([$id, $user['id']]);
-        }
+        [$scope, $scopeParams] = ownerScope($user);
+        $stmt = run($db, "DELETE FROM Contacts WHERE ID = ?$scope", [$id, ...$scopeParams]);
 
         if ($stmt->rowCount() === 0) {
             jsonResponse(['error' => 'Contact not found.'], 404);
         }
-
-        jsonResponse([
-            'message' => 'Contact deleted.',
-            'id' => $id
-        ]);
+        jsonResponse(['message' => 'Contact deleted.', 'id' => $id]);
     }
 
     jsonResponse(['error' => 'Method not allowed.'], 405);
 
 } catch (PDOException $e) {
     error_log($e->getMessage());
-
-    //Friends database got hacked so I made sure to hide our credentials.
-    jsonResponse([
-        'error' => 'Database error. Check the PHP/MySQL configuration and server logs.'
-    ], 500);
+    //Keep DB details out of the response so credentials/schema never leak
+    jsonResponse(['error' => 'Database error. Check the PHP/MySQL configuration and server logs.'], 500);
 } catch (Throwable $e) {
     error_log($e->getMessage());
     jsonResponse(['error' => 'Server error.'], 500);
