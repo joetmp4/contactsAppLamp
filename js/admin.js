@@ -65,8 +65,7 @@ function buildUserRow(user) {
     const actionsCell = document.createElement('td');
     actionsCell.className = 'contact-actions';
 
-    // The API only supports disabling - there's currently no way to
-    // re-enable an account, so once disabled we just show the status.
+    //Disable
     if (isActive(user)) {
         const disableButton = document.createElement('button');
         disableButton.type = 'button';
@@ -278,8 +277,6 @@ createAdminForm.addEventListener('submit', async (event) => {
 });
 
 logoutButton.addEventListener('click', () => {
-    // The real backend has no logout endpoint - sessions just expire after
-    // SESSION_HOURS. Clearing the client-side token is enough for the UI.
     sessionStorage.clear();
     window.location.replace('./index.html');
 });
