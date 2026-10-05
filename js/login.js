@@ -30,6 +30,7 @@ loginForm.addEventListener('submit', async function (event) {
 
         if (!response.ok) {
             if (response.status === 401 || response.status === 403) {
+                sessionStorage.setItem('loginErrorMessage', result.error || 'We couldn\'t log you in. Please check your credentials and try again.');
                 window.location.assign('./login-error.html');
                 return;
             }
